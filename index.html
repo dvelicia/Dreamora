@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cerita Sebelum Tidur</title>
+<style>
+  :root{
+    --sky-deep: #1a1a3e;
+    --sky-mid: #2d2b5e;
+    --sky-soft: #4a4785;
+    --star-gold: #f5d68c;
+    --star-soft: #fff2d0;
+    --text-main: #f4f1fa;
+    --text-soft: #c9c5e8;
+    --card-bg: rgba(255,255,255,0.06);
+    --card-border: rgba(245,214,140,0.25);
+  }
+
+  * { box-sizing: border-box; }
+
+  body{
+    margin:0;
+    min-height:100vh;
+    background: radial-gradient(ellipse at top, var(--sky-mid) 0%, var(--sky-deep) 55%, #0f0e28 100%);
+    font-family: 'Georgia', 'Iowan Old Style', serif;
+    color: var(--text-main);
+    overflow-x:hidden;
+    position:relative;
+  }
+
+  #stars{
+    position:fixed;
+    inset:0;
+    z-index:0;
+    pointer-events:none;
+  }
+
+  .star{
+    position:absolute;
+    background: var(--star-soft);
+    border-radius:50%;
+    animation: twinkle 3.5s ease-in-out infinite;
+  }
+
+  @keyframes twinkle{
+    0%,100%{ opacity:0.25; transform:scale(0.85); }
+    50%{ opacity:1; transform:scale(1.15); }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .star{ animation:none; opacity:0.6; }
+  }
+
+  .wrap{
+    position:relative;
+    z-index:1;
+    max-width:640px;
+    margin:0 auto;
+    padding: 48px 24px 80px;
+  }
+
+  header.site{
+    text-align:center;
+    margin-bottom:40px;
+  }
+
+  .moon{
+    font-size:38px;
+    display:block;
+    margin-bottom:10px;
+    filter: drop-shadow(0 0 12px rgba(245,214,140,0.5));
+  }
+
+  h1.site-title{
+    font-family: 'Palatino Linotype', 'Book Antiqua', Georgia, serif;
+    font-weight:400;
+    font-size: clamp(28px, 6vw, 38px);
+    letter-spacing: 0.02em;
+    margin: 0 0 8px;
+    color: var(--star-soft);
+  }
+
+  .site-sub{
+    font-family: Georgia, serif;
+    font-style: italic;
+    color: var(--text-soft);
+    font-size: 16px;
+    margin:0;
+  }
+
+  /* ---- LIST VIEW ---- */
+  .story-list{
+    display:flex;
+    flex-direction:column;
+    gap:18px;
+  }
+
+  .story-card{
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 18px;
+    padding: 22px 24px;
+    cursor:pointer;
+    transition: transform 0.25s ease, background 0.25s ease, box-shadow 0.25s ease;
+    display:flex;
+    align-items:center;
+    gap:16px;
+  }
+
+  .story-card:hover, .story-card:focus-visible{
+    background: rgba(255,255,255,0.1);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.35);
+    outline: none;
+  }
+
+  .story-card:focus-visible{
+    box-shadow: 0 0 0 2px var(--star-gold), 0 8px 24px rgba(0,0,0,0.35);
+  }
+
+  .card-icon{
+    font-size: 26px;
+    flex-shrink:0;
+    filter: drop-shadow(0 0 6px rgba(245,214,140,0.4));
+  }
+
+  .card-text{ flex:1; }
+
+  .card-title{
+    margin:0 0 4px;
+    font-size:19px;
+    color: var(--star-soft);
+    font-weight:normal;
+  }
+
+  .card-desc{
+    margin:0;
+    font-size:14px;
+    color: var(--text-soft);
+    font-family: -apple-system, sans-serif;
+    line-height:1.4;
+  }
+
+  .card-arrow{
+    color: var(--star-gold);
+    font-size:18px;
+    opacity:0.7;
+  }
+
+  /* empty state for future stories */
+  .story-empty{
+    text-align:center;
+    color: var(--text-soft);
+    font-style: italic;
+    font-size:14px;
+    margin-top: 28px;
+    opacity:0.7;
+  }
+
+  /* ---- READER VIEW ---- */
+  .reader{ display:none; }
+  .reader.active{ display:block; }
+  .story-list-view.hidden{ display:none; }
+
+  .back-btn{
+    background:none;
+    border:1px solid var(--card-border);
+    color: var(--text-soft);
+    font-family: -apple-system, sans-serif;
+    font-size:14px;
+    padding:8px 16px;
+    border-radius: 999px;
+    cursor:pointer;
+    margin-bottom: 28px;
+    transition: background 0.2s ease, color 0.2s ease;
+  }
+  .back-btn:hover{ background: rgba(255,255,255,0.08); color: var(--star-soft); }
+
+  .story-title{
+    font-size: clamp(24px, 6vw, 32px);
+    color: var(--star-soft);
+    text-align:center;
+    font-weight:normal;
+    margin: 0 0 6px;
+  }
+
+  .story-kicker{
+    text-align:center;
+    font-family:-apple-system, sans-serif;
+    font-size:13px;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+    color: var(--star-gold);
+    opacity:0.75;
+    margin-bottom: 36px;
+  }
+
+  .story-body p{
+    font-size: 19px;
+    line-height: 1.9;
+    color: var(--text-main);
+    text-align:center;
+    margin: 0 0 8px;
+  }
+
+  .divider{
+    text-align:center;
+    color: var(--star-gold);
+    opacity:0.5;
+    margin: 26px 0;
+    font-size:14px;
+    letter-spacing: 6px;
+  }
+
+  .story-note{
+    margin-top: 44px;
+    padding-top: 20px;
+    border-top: 1px solid var(--card-border);
+    font-family: -apple-system, sans-serif;
+    font-size: 13px;
+    line-height:1.6;
+    color: var(--text-soft);
+    font-style: italic;
+    text-align:center;
+  }
+
+  footer.site{
+    text-align:center;
+    margin-top:60px;
+    font-family:-apple-system, sans-serif;
+    font-size:12px;
+    color: var(--text-soft);
+    opacity:0.5;
+  }
+</style>
+</head>
+<body>
+
+<div id="stars"></div>
+
+<div class="wrap">
+  <header class="site">
+    <span class="moon">🌙</span>
+    <h1 class="site-title">Cerita Sebelum Tidur</h1>
+    <p class="site-sub">Kumpulan cerita lembut untuk menemani si kecil terlelap</p>
+  </header>
+
+  <!-- LIST VIEW -->
+  <main class="story-list-view" id="listView">
+    <div class="story-list" id="storyList"></div>
+    <p class="story-empty" id="emptyNote"></p>
+  </main>
+
+  <!-- READER VIEW -->
+  <main class="reader" id="readerView">
+    <button class="back-btn" id="backBtn">← Kembali ke daftar cerita</button>
+    <p class="story-kicker" id="readerKicker"></p>
+    <h2 class="story-title" id="readerTitle"></h2>
+    <div class="story-body" id="readerBody"></div>
+  </main>
+
+  <footer class="site">dibacakan pelan-pelan, ditemani cahaya redup 🌙</footer>
+</div>
+
+<script>
+  // ============================================================
+  // DATA CERITA — tambahkan cerita baru di sini kapan pun.
+  // Setiap cerita: id, icon, judul, deskripsi singkat (untuk kartu),
+  // kicker (label kecil), dan paragraphs (array paragraf/bagian).
+  // Gunakan "---" sebagai satu elemen array untuk membuat jeda pemisah.
+  // ============================================================
+  const STORIES = [
+    {
+      id: "bintang-kecil",
+      icon: "✨",
+      title: "Selamat Malam, Bintang Kecil",
+      desc: "Perjalanan lembut mengikuti matahari terbenam, bintang, angin, dan hujan sampai tertidur.",
+      kicker: "Cerita alam · untuk usia 0–1 tahun",
+      paragraphs: [
+        "Matahari mulai mengantuk,\nlangit pun berubah warna.\nJingga lembut, lalu ungu,\nlalu gelap yang tenang.",
+        "\"Selamat malam,\" bisik matahari,\n\"aku pergi tidur dulu ya.\"",
+        "---",
+        "Satu bintang muncul di langit,\nberkedip pelan... pelan...\nLalu satu lagi,\ndan satu lagi.",
+        "Bintang-bintang kecil berkumpul,\nmenjaga langit malam ini.\nMereka tidak berisik,\nmereka hanya berkedip lembut,\nseperti mengucap selamat malam\nuntuk semua yang ada di bumi.",
+        "---",
+        "Angin malam pun datang,\nberbisik pelan di antara daun.\n\"Ssshh... ssshh...\nsaatnya tidur, sayang.\"",
+        "Ia menyapa bunga-bunga,\nmenyapa pohon yang mengantuk,\nmenyapa jendela kamarmu,\ndengan hembusan yang lembut.",
+        "---",
+        "Titik-titik hujan turun perlahan,\ntik... tik... tik...\ndi atas atap rumah,\nseperti nyanyian yang tenang.",
+        "Hujan tidak datang untuk ramai,\nia datang untuk menenangkan,\nuntuk menemani mata yang berat,\nsampai perlahan... terpejam.",
+        "---",
+        "Bulan pun tersenyum dari atas,\nmenjaga bintang, menjaga hujan,\nmenjaga angin, menjaga bumi,\ndan menjaga kamu yang sedang tidur.",
+        "Semua sudah tenang,\nsemua sudah damai.\nBintang berkedip pelan,\nhujan berbisik lembut,\nangin mendekap hangat.",
+        "---",
+        "Sekarang giliranmu, sayang.\nPejamkan matamu perlahan,\nseperti bintang yang mulai meredup,\nseperti hujan yang mulai reda.",
+        "Selamat malam, bintang kecil.\nSelamat malam, sayangku.\nTidurlah dengan tenang,\ndalam pelukan malam yang damai.",
+        "*(perlahan dan pelan)*\nTik... tik...\nSsshh...\n...zzz."
+      ],
+      note: "Cerita ini dirancang untuk dibacakan dengan suara pelan dan tempo lambat. Jeda di antara bagian boleh diperpanjang sesuai respons si kecil. Bagian akhir bisa diulang-ulang sebagai pola menenangkan menjelang tidur."
+    },
+    {
+      id: "kelinci-kecil",
+      icon: "🐇",
+      title: "Kelinci Kecil yang Mengantuk",
+      desc: "Kelinci kecil berkeliling kebun mengucap selamat malam pada teman-temannya sebelum tidur.",
+      kicker: "Cerita hewan · untuk usia 0–1 tahun",
+      paragraphs: [
+        "Di kebun yang tenang,\nada kelinci kecil bernama Kiki.\nMatanya mulai berat,\ntapi ia ingin mengucap selamat malam dulu.",
+        "---",
+        "\"Selamat malam, kupu-kupu,\" bisik Kiki pelan.\nKupu-kupu melipat sayapnya,\ndan tersenyum mengantuk.",
+        "\"Selamat malam, burung kecil,\" kata Kiki lagi.\nBurung kecil sudah di sarangnya,\nmenutup mata perlahan.",
+        "---",
+        "\"Selamat malam, bunga-bunga,\" Kiki berbisik.\nKelopak bunga menguncup pelan,\nseperti ikut mengantuk juga.",
+        "\"Selamat malam, rumput lembut,\" kata Kiki,\nsambil merebahkan badannya yang kecil,\ndi atas rumput yang hangat.",
+        "---",
+        "Kiki menguap satu kali,\nlalu menguap dua kali.\nMatanya semakin berat,\ntelinganya terkulai lembut.",
+        "Semua teman di kebun sudah tidur,\nkupu-kupu, burung kecil, bunga, dan rumput.\nKini giliran Kiki juga,\nmemejamkan mata perlahan-lahan.",
+        "---",
+        "\"Selamat malam, kebun kecilku,\"\nbisik Kiki untuk terakhir kali.\nLalu ia pun terlelap,\ndalam mimpi yang lembut dan tenang.",
+        "*(perlahan dan pelan)*\nHmm... hmm...\n...zzz."
+      ],
+      note: "Nama-nama teman kebun (kupu-kupu, burung, bunga) bisa diganti sesuai yang disukai si kecil. Ulangi pola 'selamat malam, ...' dengan suara semakin pelan setiap kali."
+    },
+    {
+      id: "pelukan-ayah-ibu",
+      icon: "🤍",
+      title: "Pelukan Ayah dan Ibu",
+      desc: "Bayi kecil dipeluk hangat oleh ayah dan ibu, dininabobokan sampai tertidur nyenyak.",
+      kicker: "Cerita keluarga · untuk usia 0–1 tahun",
+      paragraphs: [
+        "Malam ini sudah gelap,\nlampu kamar diredupkan pelan.\nIbu mendekap si kecil,\ndalam pelukan yang hangat.",
+        "---",
+        "Ayah duduk di sebelahnya,\nmengusap kepala si kecil lembut.\n\"Sudah waktunya tidur, sayang,\"\nbisiknya dengan suara pelan.",
+        "Detak jantung ibu terdengar,\npelan, tenang, berirama.\nSeperti nyanyian yang paling dikenal,\nsejak sebelum si kecil lahir.",
+        "---",
+        "\"Kamu sudah pintar hari ini,\"\nkata ibu sambil tersenyum.\n\"Sekarang saatnya istirahat,\nmimpi indah menantimu.\"",
+        "Ayah menyanyikan lagu pelan,\ntanpa kata, hanya nada lembut.\nSuaranya rendah dan menenangkan,\nseperti selimut yang menghangatkan.",
+        "---",
+        "Tangan kecil menggenggam jari ayah,\nerat, hangat, dan nyaman.\nMata yang tadi terbuka lebar,\nperlahan mulai menutup.",
+        "Ibu dan ayah saling berpandangan,\ntersenyum melihat si kecil mengantuk.\nMereka berdua akan selalu ada,\nmenjaga setiap malam yang datang.",
+        "---",
+        "\"Selamat malam, sayang kami,\"\nbisik ayah dan ibu bersama.\nDalam pelukan yang paling hangat,\nsi kecil pun terlelap tenang.",
+        "*(perlahan dan pelan)*\nSssh... sssh...\n...zzz."
+      ],
+      note: "Cerita ini cocok dibacakan sambil memeluk atau menggendong si kecil, agar ia merasakan langsung kehangatan yang diceritakan."
+    },
+    {
+      id: "waktunya-mandi",
+      icon: "🛁",
+      title: "Waktunya Mandi, Lalu Tidur",
+      desc: "Rutinitas lembut mandi air hangat sebelum akhirnya bayi bersiap tidur dengan nyaman.",
+      kicker: "Cerita keseharian · untuk usia 0–1 tahun",
+      paragraphs: [
+        "Air hangat sudah disiapkan,\ndi dalam bak kecil yang nyaman.\n\"Ayo mandi dulu, sayang,\"\nkata ibu dengan suara lembut.",
+        "---",
+        "Percikan air pelan-pelan,\nmembasahi kaki dan tangan mungil.\nSabun harum wangi lembut,\nmembuat badan bersih dan segar.",
+        "Handuk hangat menanti,\nsiap membungkus badan kecil.\n\"Sudah bersih dan wangi,\"\nbisik ibu sambil tersenyum.",
+        "---",
+        "Baju tidur yang lembut,\ndipakaikan perlahan-lahan.\nSelembut kapas, sehangat pelukan,\nsiap menemani tidur malam ini.",
+        "Lampu kamar diredupkan,\nhanya cahaya kecil yang tersisa.\nKasur empuk sudah menanti,\nbantal kecil yang nyaman.",
+        "---",
+        "\"Sekarang badanmu sudah bersih,\nperutmu sudah kenyang,\nsaatnya memejamkan mata,\ndan beristirahat dengan tenang.\"",
+        "Ibu mengusap punggung pelan,\nsambil bersenandung tanpa kata.\nMata yang tadi berbinar,\nkini mulai terasa berat.",
+        "---",
+        "\"Selamat malam, badan yang bersih.\nSelamat malam, mata yang mengantuk.\nSelamat tidur, sayangku,\nmimpi indah menantimu.\"",
+        "*(perlahan dan pelan)*\nCess... cess...\n...zzz."
+      ],
+      note: "Cerita ini bisa dibacakan sebagai bagian dari rutinitas mandi-tidur yang konsisten setiap malam, membantu si kecil mengenali pola menjelang tidur."
+    }
+    // Tambahkan objek cerita baru di sini, pisahkan dengan koma.
+  ];
+
+  // ---- render bintang latar ----
+  const starsContainer = document.getElementById('stars');
+  const STAR_COUNT = 60;
+  for(let i=0;i<STAR_COUNT;i++){
+    const s = document.createElement('div');
+    s.className = 'star';
+    const size = Math.random()*2.2 + 1;
+    s.style.width = size+'px';
+    s.style.height = size+'px';
+    s.style.left = Math.random()*100+'%';
+    s.style.top = Math.random()*100+'%';
+    s.style.animationDelay = (Math.random()*3.5)+'s';
+    s.style.animationDuration = (2.5 + Math.random()*3)+'s';
+    starsContainer.appendChild(s);
+  }
+
+  // ---- render daftar cerita ----
+  const listEl = document.getElementById('storyList');
+  const emptyNote = document.getElementById('emptyNote');
+
+  function renderList(){
+    listEl.innerHTML = '';
+    STORIES.forEach(story => {
+      const card = document.createElement('div');
+      card.className = 'story-card';
+      card.tabIndex = 0;
+      card.setAttribute('role','button');
+      card.setAttribute('aria-label', 'Baca cerita: ' + story.title);
+      card.innerHTML = `
+        <span class="card-icon">${story.icon}</span>
+        <span class="card-text">
+          <p class="card-title">${story.title}</p>
+          <p class="card-desc">${story.desc}</p>
+        </span>
+        <span class="card-arrow">→</span>
+      `;
+      card.addEventListener('click', () => openStory(story.id));
+      card.addEventListener('keydown', (e) => {
+        if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); openStory(story.id); }
+      });
+      listEl.appendChild(card);
+    });
+
+    emptyNote.textContent = STORIES.length <= 1
+      ? "Cerita baru akan menyusul di sini ✨"
+      : "";
+  }
+
+  // ---- reader view ----
+  const listView = document.getElementById('listView');
+  const readerView = document.getElementById('readerView');
+  const readerTitle = document.getElementById('readerTitle');
+  const readerKicker = document.getElementById('readerKicker');
+  const readerBody = document.getElementById('readerBody');
+  const backBtn = document.getElementById('backBtn');
+
+  function openStory(id){
+    const story = STORIES.find(s => s.id === id);
+    if(!story) return;
+
+    readerTitle.textContent = story.title;
+    readerKicker.textContent = story.kicker || '';
+    readerBody.innerHTML = '';
+
+    story.paragraphs.forEach(p => {
+      if(p === '---'){
+        const div = document.createElement('div');
+        div.className = 'divider';
+        div.textContent = '· · ·';
+        readerBody.appendChild(div);
+      } else {
+        const para = document.createElement('p');
+        para.innerHTML = p.replace(/\n/g,'<br>').replace(/\*(.*?)\*/g, '<em>$1</em>');
+        readerBody.appendChild(para);
+      }
+    });
+
+    if(story.note){
+      const note = document.createElement('div');
+      note.className = 'story-note';
+      note.textContent = story.note;
+      readerBody.appendChild(note);
+    }
+
+    listView.classList.add('hidden');
+    readerView.classList.add('active');
+    window.scrollTo({top:0, behavior:'smooth'});
+  }
+
+  backBtn.addEventListener('click', () => {
+    readerView.classList.remove('active');
+    listView.classList.remove('hidden');
+    window.scrollTo({top:0, behavior:'smooth'});
+  });
+
+  renderList();
+
+  // Halaman daftar cerita akan tampil lebih dulu.
+  // (Cerita otomatis terbuka hanya kalau jumlah cerita persis 1.)
+  if(STORIES.length === 1){
+    openStory(STORIES[0].id);
+  }
+</script>
+
+</body>
+</html>
