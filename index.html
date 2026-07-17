@@ -89,23 +89,62 @@
     margin:0;
   }
 
+  /* ---- CATEGORY FILTER ---- */
+  .filter-row{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+    justify-content:center;
+    margin-bottom: 32px;
+  }
+
+  .filter-btn{
+    font-family: -apple-system, sans-serif;
+    font-size: 13px;
+    color: var(--text-soft);
+    background: transparent;
+    border: 1px solid var(--card-border);
+    padding: 8px 16px;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+    white-space: nowrap;
+  }
+
+  .filter-btn:hover{
+    background: rgba(255,255,255,0.08);
+    color: var(--star-soft);
+  }
+
+  .filter-btn:focus-visible{
+    outline: none;
+    box-shadow: 0 0 0 2px var(--star-gold);
+  }
+
+  .filter-btn.active{
+    background: var(--star-gold);
+    border-color: var(--star-gold);
+    color: var(--sky-deep);
+    font-weight: bold;
+  }
+
   /* ---- LIST VIEW ---- */
   .story-list{
-    display:flex;
-    flex-direction:column;
-    gap:18px;
+    display:grid;
+    grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+    gap:12px;
   }
 
   .story-card{
     background: var(--card-bg);
     border: 1px solid var(--card-border);
-    border-radius: 18px;
-    padding: 22px 24px;
+    border-radius: 16px;
+    padding: 14px 16px;
     cursor:pointer;
     transition: transform 0.25s ease, background 0.25s ease, box-shadow 0.25s ease;
     display:flex;
     align-items:center;
-    gap:16px;
+    gap:12px;
   }
 
   .story-card:hover, .story-card:focus-visible{
@@ -120,32 +159,28 @@
   }
 
   .card-icon{
-    font-size: 26px;
+    font-size: 22px;
     flex-shrink:0;
     filter: drop-shadow(0 0 6px rgba(245,214,140,0.4));
   }
 
-  .card-text{ flex:1; }
+  .card-text{ flex:1; min-width:0; }
 
   .card-title{
-    margin:0 0 4px;
-    font-size:19px;
+    margin:0;
+    font-size:16px;
     color: var(--star-soft);
     font-weight:normal;
+    line-height:1.3;
   }
 
-  .card-desc{
-    margin:0;
-    font-size:14px;
-    color: var(--text-soft);
-    font-family: -apple-system, sans-serif;
-    line-height:1.4;
-  }
+  .card-desc{ display:none; }
 
   .card-arrow{
     color: var(--star-gold);
-    font-size:18px;
+    font-size:16px;
     opacity:0.7;
+    flex-shrink:0;
   }
 
   /* empty state for future stories */
@@ -248,6 +283,7 @@
 
   <!-- LIST VIEW -->
   <main class="story-list-view" id="listView">
+    <div class="filter-row" id="filterRow"></div>
     <div class="story-list" id="storyList"></div>
     <p class="story-empty" id="emptyNote"></p>
   </main>
@@ -276,6 +312,7 @@
       icon: "✨",
       title: "Selamat Malam, Bintang Kecil",
       desc: "Perjalanan lembut mengikuti matahari terbenam, bintang, angin, dan hujan sampai tertidur.",
+      category: "alam",
       kicker: "Cerita alam · untuk usia 0–1 tahun",
       paragraphs: [
         "Matahari mulai mengantuk,\nlangit pun berubah warna.\nJingga lembut, lalu ungu,\nlalu gelap yang tenang.",
@@ -304,6 +341,7 @@
       icon: "🐇",
       title: "Kelinci Kecil yang Mengantuk",
       desc: "Kelinci kecil berkeliling kebun mengucap selamat malam pada teman-temannya sebelum tidur.",
+      category: "hewan",
       kicker: "Cerita hewan · untuk usia 0–1 tahun",
       paragraphs: [
         "Di kebun yang tenang,\nada kelinci kecil bernama Kiki.\nMatanya mulai berat,\ntapi ia ingin mengucap selamat malam dulu.",
@@ -327,6 +365,7 @@
       icon: "🤍",
       title: "Pelukan Ayah dan Ibu",
       desc: "Bayi kecil dipeluk hangat oleh ayah dan ibu, dininabobokan sampai tertidur nyenyak.",
+      category: "keluarga",
       kicker: "Cerita keluarga · untuk usia 0–1 tahun",
       paragraphs: [
         "Malam ini sudah gelap,\nlampu kamar diredupkan pelan.\nIbu mendekap si kecil,\ndalam pelukan yang hangat.",
@@ -350,6 +389,7 @@
       icon: "🛁",
       title: "Waktunya Mandi, Lalu Tidur",
       desc: "Rutinitas lembut mandi air hangat sebelum akhirnya bayi bersiap tidur dengan nyaman.",
+      category: "keseharian",
       kicker: "Cerita keseharian · untuk usia 0–1 tahun",
       paragraphs: [
         "Air hangat sudah disiapkan,\ndi dalam bak kecil yang nyaman.\n\"Ayo mandi dulu, sayang,\"\nkata ibu dengan suara lembut.",
@@ -367,6 +407,222 @@
         "*(perlahan dan pelan)*\nCess... cess...\n...zzz."
       ],
       note: "Cerita ini bisa dibacakan sebagai bagian dari rutinitas mandi-tidur yang konsisten setiap malam, membantu si kecil mengenali pola menjelang tidur."
+    },
+    {
+      id: "awan-kapas",
+      icon: "☁️",
+      title: "Awan Kapas yang Melayang",
+      desc: "Awan-awan lembut melayang pelan di langit sore, mengantar si kecil menuju mimpi.",
+      category: "alam",
+      kicker: "Cerita alam · untuk usia 0–1 tahun",
+      paragraphs: [
+        "Di langit sore yang tenang,\nada awan kecil bernama Kapas.\nIa melayang pelan-pelan,\ntanpa terburu-buru sama sekali.",
+        "---",
+        "Kapas berbentuk seperti domba,\nlembut, putih, dan empuk.\nIa mengambang di antara warna jingga,\nsambil menguap perlahan.",
+        "\"Aku juga mengantuk,\" kata Kapas,\nsambil merapatkan dirinya.\nIa berubah bentuk jadi bantal,\nbantal awan yang paling nyaman.",
+        "---",
+        "Di bawahnya, angin sepoi bertiup,\nmembantu Kapas melayang tenang.\nMereka berdua berteman baik,\nmenemani langit sore ini.",
+        "Burung-burung pun pulang ke sarang,\nterbang di bawah Kapas yang lembut.\n\"Selamat malam, Kapas,\" kata mereka,\nsambil mengepakkan sayap pelan.",
+        "---",
+        "Kapas semakin rendah melayang,\nmendekati bukit yang tenang.\nWarnanya berubah keunguan,\nseperti mengantuk bersama langit.",
+        "Bintang-bintang mulai muncul,\nmenyapa Kapas satu per satu.\n\"Istirahatlah, Kapas,\" bisik bintang,\n\"kami yang jaga langit malam ini.\"",
+        "---",
+        "Kapas pun berhenti melayang,\ndiam di ujung langit yang gelap.\nSeperti kamu yang sudah nyaman,\ndi tempat tidur yang empuk dan hangat.",
+        "*(perlahan dan pelan)*\nMelayang... melayang...\n...zzz."
+      ],
+      note: "Bagian 'Kapas berubah bentuk' bisa diucapkan sambil menunjuk langit-langit kamar atau langit sungguhan, membantu si kecil membayangkan awan yang bergerak pelan."
+    },
+    {
+      id: "perahu-kecil",
+      icon: "⛵",
+      title: "Perahu Kecil di Laut Tenang",
+      desc: "Perahu kecil berlayar pelan di laut yang tenang, diayun ombak lembut menuju pelabuhan mimpi.",
+      category: "alam",
+      kicker: "Cerita alam · untuk usia 0–1 tahun",
+      paragraphs: [
+        "Di laut yang tenang dan biru,\nada perahu kecil berlayar pelan.\nLayarnya putih dan lembut,\nseperti awan yang turun ke air.",
+        "---",
+        "Ombak kecil mengayun perahu,\nnaik... turun... naik... turun...\nseperti ayunan yang menenangkan,\nseperti pelukan yang lembut.",
+        "\"Kemana kita akan berlayar?\"\ntanya perahu kecil pelan.\nAngin laut menjawab lembut,\n\"Menuju pelabuhan mimpi indah.\"",
+        "---",
+        "Ikan-ikan kecil ikut berenang,\nmenemani perahu di sampingnya.\nMereka tidak berisik sama sekali,\nhanya berenang pelan dan tenang.",
+        "Bulan bersinar di atas laut,\nmemantul lembut di permukaan air.\nCahayanya menjadi jalan cahaya,\nmenuntun perahu menuju istirahat.",
+        "---",
+        "Perahu kecil mulai melambat,\nlayarnya perlahan diturunkan.\nOmbak pun ikut menjadi tenang,\nseperti menyanyikan pengantar tidur.",
+        "\"Kita sudah sampai,\" bisik perahu,\ndi pelabuhan yang damai dan hangat.\nJangkar diturunkan pelan-pelan,\nperahu pun beristirahat.",
+        "---",
+        "Sama seperti perahu kecil itu,\nkamu juga sudah sampai waktu istirahat.\nOmbak sudah tenang, angin sudah pelan,\nsaatnya memejamkan mata.",
+        "*(perlahan dan pelan)*\nOmbak... pelan...\n...zzz."
+      ],
+      note: "Gerakan mengayun pelan (misalnya sambil menggendong atau mengayun ringan) bisa mengikuti pola 'naik... turun...' pada bagian awal cerita."
+    },
+    {
+      id: "boneka-beruang",
+      icon: "🧸",
+      title: "Boneka Beruang Menjaga Malam",
+      desc: "Boneka beruang setia menemani dan menjaga si kecil sepanjang malam sampai pagi tiba.",
+      category: "keseharian",
+      kicker: "Cerita keseharian · untuk usia 0–1 tahun",
+      paragraphs: [
+        "Di atas kasur yang empuk,\nada boneka beruang bernama Bobo.\nBulunya lembut dan hangat,\nselalu siap menemani tidur.",
+        "---",
+        "\"Ayo kita tidur sama-sama,\"\nbisik Bobo pelan-pelan.\nIa merebahkan diri di samping,\nsiap menjaga sepanjang malam.",
+        "Bobo tidak pernah mengantuk duluan,\nia selalu menunggu sampai kamu terlelap.\nMatanya yang bulat dan lembut,\nselalu terjaga dengan setia.",
+        "---",
+        "Di luar jendela, malam semakin gelap,\ntapi kamar terasa hangat dan aman.\nBobo mendekap erat, tidak terlalu kencang,\njust cukup untuk terasa nyaman.",
+        "\"Kalau kamu mimpi indah,\"\nkata Bobo dengan suara pelan,\n\"aku akan ada di sini terus,\nsampai matahari pagi datang.\"",
+        "---",
+        "Selimut menutupi kalian berdua,\nhangat, lembut, dan nyaman.\nNapas mulai teratur dan tenang,\nseiring mata yang semakin berat.",
+        "Bobo memejamkan matanya juga,\nikut menemani dalam diam.\nTapi ia tetap menjaga, selalu siaga,\nsampai pagi tiba dengan cahaya baru.",
+        "---",
+        "\"Selamat malam, sayangku,\"\nbisik Bobo untuk terakhir kali.\n\"Tidurlah dengan tenang,\naku akan selalu di sini.\"",
+        "*(perlahan dan pelan)*\nDekap... hangat...\n...zzz."
+      ],
+      note: "Cerita ini cocok dibacakan sambil memeluk boneka favorit si kecil, atau menyebut nama boneka kesayangannya sebagai pengganti 'Bobo'."
+    },
+    {
+      id: "kunang-kunang",
+      icon: "🌟",
+      title: "Kunang-Kunang Kecil",
+      desc: "Kunang-kunang menyalakan lampu kecilnya satu per satu, menerangi jalan pulang menuju mimpi.",
+      category: "hewan",
+      kicker: "Cerita hewan · untuk usia 0–1 tahun",
+      paragraphs: [
+        "Di semak-semak yang gelap,\nada kunang-kunang bernama Kilau.\nEkornya menyala kecil,\nseperti bintang yang bisa terbang.",
+        "---",
+        "\"Nyala... padam... nyala... padam...\"\nKilau berkedip pelan-pelan.\nCahayanya kuning keemasan,\nlembut, tidak menyilaukan.",
+        "Ia terbang perlahan di udara,\ntidak terburu-buru sama sekali.\nTeman-temannya ikut menyala,\nsatu per satu di sekitarnya.",
+        "---",
+        "Mereka membentuk barisan cahaya,\nseperti kalung bintang yang bergerak.\nMenerangi jalan pulang yang gelap,\ndengan cahaya yang paling lembut.",
+        "\"Ayo pulang,\" bisik Kilau pelan,\npada teman-temannya yang berkedip.\nSatu per satu mereka mendekat,\nke sarang yang hangat dan aman.",
+        "---",
+        "Cahaya Kilau semakin redup,\nseiring rasa kantuk yang datang.\n\"Nyala... padam...\" makin pelan,\nsampai hampir tidak terlihat.",
+        "Kunang-kunang lain juga meredup,\nsatu demi satu memejamkan cahaya.\nSeperti lampu kamar yang diredupkan,\nsaat waktunya tidur tiba.",
+        "---",
+        "\"Selamat malam, cahaya kecil,\"\nbisik Kilau untuk terakhir kali.\nCahayanya padam dengan tenang,\nberganti dengan mimpi yang indah.",
+        "*(perlahan dan pelan)*\nNyala... padam...\n...zzz."
+      ],
+      note: "Bisa dibacakan sambil meredupkan lampu kamar secara bertahap, mengikuti cahaya kunang-kunang yang semakin pelan di cerita."
+    },
+    {
+      id: "kucing-mendengkur",
+      icon: "🐈",
+      title: "Kucing Kecil yang Mendengkur",
+      desc: "Kucing kecil melingkar hangat dan mendengkur pelan, mengajak si kecil ikut merasa nyaman dan mengantuk.",
+      category: "hewan",
+      kicker: "Cerita hewan · untuk usia 0–1 tahun",
+      paragraphs: [
+        "Di atas bantal yang empuk,\nada kucing kecil bernama Momo.\nBulunya lembut berwarna abu-abu,\nselalu hangat kalau disentuh.",
+        "---",
+        "Momo melingkarkan badannya,\nseperti bola bulu yang nyaman.\nEkornya menutupi hidungnya,\nsiap untuk tidur siang panjang.",
+        "\"Grrr... grrr...\" Momo mendengkur,\nsuara pelan yang menenangkan.\nSeperti mesin kecil yang lembut,\nberirama, tenang, dan hangat.",
+        "---",
+        "Kumisnya bergerak pelan,\nsaat ia bermimpi tentang benang.\nKakinya sesekali bergerak kecil,\ntapi matanya tetap terpejam.",
+        "Sinar matahari sore menghangatkan,\njatuh lembut di atas bulunya.\nMomo semakin nyaman meringkuk,\ndengkurannya semakin teratur.",
+        "---",
+        "\"Grrr... grrr...\" terus terdengar,\nseperti nyanyian pengantar tidur.\nSuara itu membuat siapa saja,\nikut merasa mengantuk dan tenang.",
+        "Kalau kamu dengar suara itu,\nboleh ikut memejamkan mata.\nSeperti Momo yang nyaman meringkuk,\nkamu juga boleh beristirahat.",
+        "---",
+        "\"Selamat tidur,\" bisik Momo pelan,\nsela-sela dengkurannya yang lembut.\nDua-duanya pun terlelap bersama,\ndalam kehangatan sore yang damai.",
+        "*(perlahan dan pelan)*\nGrrr... grrr...\n...zzz."
+      ],
+      note: "Suara dengkuran ('grrr... grrr...') bisa diucapkan dengan nada rendah dan berulang sebagai bunyi menenangkan menjelang tidur."
+    },
+    {
+      id: "kakek-dan-bintang",
+      icon: "👴",
+      title: "Kakek dan Bintang di Beranda",
+      desc: "Kakek menggendong si kecil di beranda, menghitung bintang bersama sampai mata terasa berat.",
+      category: "keluarga",
+      kicker: "Cerita keluarga · untuk usia 0–1 tahun",
+      paragraphs: [
+        "Di beranda rumah yang tenang,\nkakek duduk sambil menggendong.\nAngin malam bertiup pelan,\nmembawa udara yang sejuk.",
+        "---",
+        "\"Ayo kita hitung bintang,\"\nkata kakek dengan suara lembut.\n\"Satu... dua... tiga...\"\nsambil menunjuk langit gelap.",
+        "Bintang-bintang berkedip menjawab,\nseakan ikut bermain hitung-hitungan.\nKakek tersenyum sambil membelai,\nkepala si kecil yang mulai mengantuk.",
+        "---",
+        "\"Kakek dulu juga suka begini,\"\nceritanya sambil mengayun pelan.\n\"Menghitung bintang sebelum tidur,\nsampai mata terasa berat.\"",
+        "Suara kakek rendah dan tenang,\nseperti nyanyian yang menenangkan.\nTangan besarnya menepuk pelan,\npunggung si kecil yang nyaman.",
+        "---",
+        "\"Empat... lima...\" kakek melanjutkan,\ntapi suaranya semakin pelan.\nSi kecil sudah tidak menghitung lagi,\nmatanya sudah hampir terpejam.",
+        "Bintang-bintang tetap berkedip,\nmenjaga langit sepanjang malam.\nKakek pun berhenti sejenak,\nmemandangi wajah yang sudah mengantuk.",
+        "---",
+        "\"Selamat malam, cucu kakek,\"\nbisiknya sambil mengecup dahi.\n\"Bintang-bintang akan menjaga,\nsampai pagi menjemputmu nanti.\"",
+        "*(perlahan dan pelan)*\nSatu... dua...\n...zzz."
+      ],
+      note: "Cerita ini bisa dibacakan sambil menggendong atau mengayun ringan, dan boleh diganti 'kakek' dengan nenek atau anggota keluarga lain yang dekat dengan si kecil."
+    },
+    {
+      id: "nyanyian-ibu",
+      icon: "🎶",
+      title: "Nyanyian Tanpa Kata dari Ibu",
+      desc: "Ibu bersenandung lembut tanpa kata, suara yang paling dikenal dan menenangkan bagi si kecil.",
+      category: "keluarga",
+      kicker: "Cerita keluarga · untuk usia 0–1 tahun",
+      paragraphs: [
+        "Di kamar yang temaram,\nibu duduk sambil mendekap.\nMulutnya bersenandung pelan,\ntanpa kata, hanya nada lembut.",
+        "---",
+        "\"Nnn... nnn... laaa...\"\nsuara ibu mengalun tenang.\nSi kecil mendengarkan dengan seksama,\nsuara yang sudah dikenalnya sejak lama.",
+        "Nada itu naik turun pelan,\nseperti gelombang di laut tenang.\nTidak ada kata yang perlu dimengerti,\ncukup rasa hangat yang tersampaikan.",
+        "---",
+        "Ibu mengayun tubuhnya perlahan,\nmengikuti irama nyanyian sendiri.\nTangannya mengusap punggung kecil,\ndengan gerakan yang lembut dan teratur.",
+        "Detak jantung ibu terdengar dekat,\nberpadu dengan nyanyian tanpa kata.\nDua suara yang sudah dikenal,\nsejak sebelum si kecil lahir ke dunia.",
+        "---",
+        "\"Mmm... mmm... laaa...\"\nsuara semakin pelan dan rendah.\nMata yang tadi terbuka lebar,\nperlahan mulai terasa berat.",
+        "Ibu tidak berhenti bersenandung,\nwalau suaranya hampir berbisik.\nIa tahu nyanyian ini bekerja,\nseperti biasanya setiap malam.",
+        "---",
+        "\"Selamat malam, nyanyian kecilku,\"\nbisik ibu di sela senandungnya.\nSi kecil pun terlelap tenang,\ndalam dekapan dan nada yang lembut.",
+        "*(perlahan dan pelan)*\nNnn... laaa...\n...zzz."
+      ],
+      note: "Nyanyian tanpa kata ('nnn... laaa...') bisa diganti dengan senandung yang biasa dipakai orang tua sendiri — yang penting nada rendah, pelan, dan berulang."
+    },
+    {
+      id: "waktu-menyusu",
+      icon: "🍼",
+      title: "Waktu Menyusu yang Tenang",
+      desc: "Momen menyusu yang hangat dan tenang, langkah terakhir sebelum si kecil benar-benar terlelap.",
+      category: "keseharian",
+      kicker: "Cerita keseharian · untuk usia 0–1 tahun",
+      paragraphs: [
+        "Kamar sudah temaram dan tenang,\nkursi goyang menanti di sudut.\nIbu duduk pelan sambil mendekap,\nsaatnya menyusu sebelum tidur.",
+        "---",
+        "Si kecil menyusu dengan tenang,\nmatanya sesekali terbuka dan menutup.\nTangan kecilnya menggenggam jari ibu,\nerat namun lembut, seperti biasa.",
+        "Suara menelan yang pelan terdengar,\nberirama, tenang, tidak terburu.\nIbu mengusap kepala dengan lembut,\nsambil bersenandung tanpa suara.",
+        "---",
+        "Kursi goyang bergerak perlahan,\nnaik... turun... naik... turun...\nseperti ombak yang menenangkan,\nmembantu mata semakin berat.",
+        "Perut kecil mulai terasa kenyang,\nhangat dan nyaman di dalam dekapan.\nGerakan menyusu semakin pelan,\nseiring kantuk yang semakin datang.",
+        "---",
+        "\"Sudah kenyang, sayang?\" bisik ibu,\nsambil mengusap pipi yang lembut.\nSi kecil menjawab dengan diam,\nmatanya sudah hampir terpejam.",
+        "Ibu tetap mendekap dengan tenang,\ntidak tergesa untuk berpindah.\nMembiarkan kehangatan ini bertahan,\nsampai benar-benar waktunya tidur.",
+        "---",
+        "\"Selamat malam, perut yang kenyang.\nSelamat malam, mata yang mengantuk.\"\nBisik ibu dengan suara paling lembut,\nmengantar si kecil menuju mimpi.",
+        "*(perlahan dan pelan)*\nHangat... nyaman...\n...zzz."
+      ],
+      note: "Cerita ini menggambarkan rutinitas menyusu sebagai bagian dari pola tidur; bisa dibacakan atau cukup diingat sebagai pengiring suasana saat momen menyusu sungguhan."
+    },
+    {
+      id: "angin-sore",
+      icon: "🍃",
+      title: "Angin Sepoi di Sore Hari",
+      desc: "Angin sore berkeliling menyapa daun, layang-layang, dan jendela rumah sebelum akhirnya ikut mereda.",
+      category: "alam",
+      kicker: "Cerita alam · untuk usia 0–1 tahun",
+      paragraphs: [
+        "Sore itu, angin sepoi bertiup,\nberkeliling dari satu tempat ke tempat lain.\nIa tidak pernah terburu-buru,\nhanya berjalan pelan dan lembut.",
+        "---",
+        "Angin menyapa daun-daun pohon,\nmembuatnya bergoyang pelan-pelan.\n\"Selamat sore,\" bisiknya lembut,\ndaun-daun pun melambai membalas.",
+        "Ia terbang menuju taman kecil,\nmenggoyang bunga yang sedang mekar.\nKelopaknya bergetar halus,\nseperti tersenyum menyambut angin.",
+        "---",
+        "Layang-layang di langit ikut bergoyang,\nditerbangkan oleh angin yang ramah.\nTali-talinya berkibar pelan,\nseperti menari mengikuti irama.",
+        "Angin lalu menuju jendela rumah,\nmasuk perlahan lewat celah kecil.\nMenyentuh tirai yang bergoyang lembut,\nmembawa udara sejuk ke dalam kamar.",
+        "---",
+        "\"Sudah waktunya aku istirahat,\"\nbisik angin sambil melambat.\nGoyangan daun mulai berhenti,\nlayang-layang perlahan turun ke tanah.",
+        "Tirai kamar juga berhenti bergoyang,\nudara kembali tenang dan diam.\nAngin sepoi sudah selesai berkeliling,\nsaatnya ia juga beristirahat.",
+        "---",
+        "\"Selamat malam, daun dan bunga.\nSelamat malam, layang-layang dan tirai,\"\nbisik angin untuk terakhir kali,\nsebelum benar-benar menjadi tenang.",
+        "*(perlahan dan pelan)*\nSsshh... sepoi...\n...zzz."
+      ],
+      note: "Bisa dibacakan sambil mengipas sangat pelan di dekat si kecil untuk menghadirkan sensasi angin sepoi yang lembut."
     }
     // Tambahkan objek cerita baru di sini, pisahkan dengan koma.
   ];
@@ -387,13 +643,52 @@
     starsContainer.appendChild(s);
   }
 
+  // ---- kategori ----
+  const CATEGORIES = {
+    semua:      { label: "Semua",      icon: "" },
+    alam:       { label: "Alam",       icon: "🌿" },
+    hewan:      { label: "Hewan",      icon: "🐇" },
+    keluarga:   { label: "Keluarga",   icon: "🤍" },
+    keseharian: { label: "Keseharian", icon: "🛁" }
+  };
+
+  let activeCategory = "semua";
+
+  // ---- render tombol filter ----
+  const filterRow = document.getElementById('filterRow');
+
+  function renderFilters(){
+    filterRow.innerHTML = '';
+    // hanya tampilkan kategori yang benar-benar dipakai oleh cerita, plus "Semua"
+    const usedCats = new Set(STORIES.map(s => s.category));
+    const catKeys = ['semua', ...Object.keys(CATEGORIES).filter(k => k !== 'semua' && usedCats.has(k))];
+
+    catKeys.forEach(key => {
+      const cat = CATEGORIES[key];
+      const btn = document.createElement('button');
+      btn.className = 'filter-btn' + (key === activeCategory ? ' active' : '');
+      btn.type = 'button';
+      btn.textContent = cat.icon ? `${cat.icon} ${cat.label}` : cat.label;
+      btn.addEventListener('click', () => {
+        activeCategory = key;
+        renderFilters();
+        renderList();
+      });
+      filterRow.appendChild(btn);
+    });
+  }
+
   // ---- render daftar cerita ----
   const listEl = document.getElementById('storyList');
   const emptyNote = document.getElementById('emptyNote');
 
   function renderList(){
     listEl.innerHTML = '';
-    STORIES.forEach(story => {
+    const filtered = activeCategory === 'semua'
+      ? STORIES
+      : STORIES.filter(s => s.category === activeCategory);
+
+    filtered.forEach(story => {
       const card = document.createElement('div');
       card.className = 'story-card';
       card.tabIndex = 0;
@@ -414,8 +709,8 @@
       listEl.appendChild(card);
     });
 
-    emptyNote.textContent = STORIES.length <= 1
-      ? "Cerita baru akan menyusul di sini ✨"
+    emptyNote.textContent = filtered.length === 0
+      ? "Belum ada cerita di kategori ini ✨"
       : "";
   }
 
@@ -466,6 +761,7 @@
     window.scrollTo({top:0, behavior:'smooth'});
   });
 
+  renderFilters();
   renderList();
 
   // Halaman daftar cerita akan tampil lebih dulu.
